@@ -1,0 +1,88 @@
+- name: Создание пользователей
+  user:
+   name: "{{ item }}"
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+
+- name: Выдача прав sudo
+  become: true
+  lineinfile:
+    dest: /etc/sudoers
+    line: "{{ item }} ALL=(ALL) NOPASSWD: ALL"
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+
+- name: Создание переменных окружения
+  become: true
+  lineinfile:
+    dest: /home/{{ item }}/.bashrc
+    line: "export USERNAME={{ item }}"
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+
+- name: Создание текстового файла
+  become: true
+  template:
+   src: template.txt.j2
+   dest: "/home/{{ item }}/{{ inventory_hostname }}_{{ item }}.txt"
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+
+- name: Создание новой группы
+  group:
+   name: innostage_company
+
+- name: Добавление пользователей в группу
+  user:
+   name: "{{ item }}"
+   groups: innostage_company
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+
+- name: Установка прав на каталог
+  become: true
+  file:
+   path: /etc/test_innostage
+   state: directory
+   mode: 0775
+   group: innostage_company
+
+- name: Создание bash-скрипта
+  become: true
+  template:
+   src: script.sh.j2
+   dest: /root/change_passwords.sh
+
+- name: Изменение разрешений скрипта
+  become: true
+  file:
+    path: /root/change_passwords.sh
+    mode: 0755
+
+- name: Запрет подключения по ssh
+  become: true
+  lineinfile:
+   dest: /home/{{ item }}/.ssh/authorized_keys
+   regexp: '^ssh-rsa'
+   state: absent
+  loop:
+   - innostage1
+   - innostage2
+   - innostage3
+    
+- name: Очистка настроек
+  become: true
+  tags: cleanup
+  command: echo "Очистка выполнена"
+    
+# tasks file for configure_server

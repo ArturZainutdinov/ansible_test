@@ -1,0 +1,6 @@
+#!/bin/bash
+
+{% for user in users %}
+# Изменение пароля для пользователя {{ user }}
+echo "{{ user }}:{{ new_password }}" | chpasswd
+{% endfor %}

@@ -1,0 +1,65 @@
+- name: Подключение репозитоия на конечном сервере
+  apt_repository:
+    repo: "ppa:ondrej/apache2"
+    state: present
+
+- name: Установка Apache из пакетов
+  apt:
+    name: apache2
+    state: present
+
+- name: Незамедлительная перезагрузка системы
+  command: reboot
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+- name: Задержка в 30 секунд
+  pause:
+    seconds: 30
+
+- name: Удаление сервиса Apache из автозагрузки системы
+  service:
+    name: apache2
+    enabled: no
+
+
+
+- name: Выполнение отложенной перезагрузки системы
+  command: shutdown -r now
+  async: 0
+  poll: 0
+  ignore_errors: true
+  changed_when: false
+
+- name: Задержка в 30 секунд
+  pause:
+    seconds: 30
+
+- name: Выполнение команды по отображению состояния сервиса Apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Добавление сервиса Apache в автозагрузку системы
+  service:
+    name: apache2
+    enabled: yes
+
+- name: Добавление правил в межсетевой экран
+  ufw:
+    rule: allow
+    port: "80,443"
+    proto: tcp
+
+- name: Наполнение веб-контента
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+
+- name: Полное удаление веб-сервера
+  apt:
+    name: apache2
+    state: absent
+  notify: Перезагрузка системы

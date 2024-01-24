@@ -1,0 +1,1 @@
+SRV01 ansible_host=192.168.65.11  ansible_user=srv01 ansible_ssh_private_key_file=/home/srv02/.ssh/id_rsa

@@ -1,0 +1,18 @@
+- name: Configure webserver
+  hosts: all
+  become: yes
+  roles:
+    - install_software
+
+  handlers:
+    - name: Перезагрузка системы
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 7
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: whoami
+
+  
+  

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Стартовая страница веб-сервера</title>
+</head>
+<body>
+  <h1>Добро пожаловать на сервер {{ ansible_hostname }}!</h1>
+  <p>Информация о системе:</p>
+  <ul>
+    <li>Имя хоста: {{ ansible_hostname }}</li>
+    <li>CPU: {{ ansible_processor_vcpus }}</li>
+    <li>RAM: {{ ansible_memtotal_mb }} MB</li>
+    <li>Дисковое пространство: {{ ansible_mounts[0].size_available | int / 1024 / 1024 }} GB</li>
+  </ul>
+</body>
+</html>

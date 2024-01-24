@@ -1,0 +1,13 @@
+- name: Конфигурирование конечного сервера
+  hosts: all
+  become: true
+  vars:
+   users:
+    - innostage1
+    - innostage2
+    - innostage3
+   new_password: "innostage"    
+  roles:
+    - configure_server
+
+
